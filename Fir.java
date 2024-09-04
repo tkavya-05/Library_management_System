@@ -1,269 +1,302 @@
 import java.util.*;
-class Fir{
-    public static void main(String args[]){
-        Scanner sc= new Scanner(System.in);
+
+class Fir {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
         System.out.println("\nWelcome to the Library");
-        // Using a loop to keep menu active until user chooses to exit
-        while(true){
-            boolean exity=false;
-            // Creating object for the Library Class
-            Library l1=new Library();
-            // Adding some books initially to the Libarary
-            Book bb1=new Book("AAA","BBB",111);  
-            Book bb2=new Book("CCC","DDD",222);
-            Book bb3=new Book("EEE","FFF",333);    
-            l1.addbook(bb3); l1.addbook(bb2); l1.addbook(bb1);
-            // Menu to the User
-            System.out.println("\n1:Add Book \n2:Remove Book\n3:Search Book\n4:Loan Book \n5:Return Book \n6:Exit ");
-            System.out.println("Choose respective numeral for Operation: ");
-            int n=sc.nextInt();
-            // Using switch operation based on respective numeral for a operation
-            switch(n){
-              case 1: 
-                    //  Adding Book to Library 
-                     System.out.println("Enter tittle,author,ISBN of a book:  ");
-                     String t=sc.next();  String a=sc.next();  int i=sc.nextInt();
-                    //  Creating book object with given book details by user
-                     Book b1=new Book(t,a,i);
-                    // Adding new Book to the Library by addbook function
-                    l1.addbook(b1);
-                     break;
-              case 2: 
-                    //   Removing book from library
-                      l1.removebook();
-                      break; 
-              case 3: 
-                    //   Searching a book in Library 
-                      System.out.println("Enter 1,2,3 for respictive operation Search by Tittle, Author, ISBN of a book: ");
-                      int ops=sc.nextInt();
-                    //   Using if else condition for appropriate operation required by the User by respective numerals
-                    // Opeartion done individually based on respective function...
-                      if(ops==1)
-                          l1.searchtittle();
-                      else if(ops==2)
-                        l1.searchauthor();
-                      else 
-                        l1.searchisbn();  
-                      break;
-              case 4: 
-                    //  Loan of a book by function loan()
-                     l1.loan();
-                     break;
-              case 5: 
-                     // Return of a book by function returnbook()
-                     l1.returnbook();
-                     break;
-              case 6:
-                    // Updating the catalogue of Library 
-                    // Removing the books from request Queue remReq 
-                      l1.removebooksofrecReq();
-                    //   Updating exity to true as per user request to exit
-                      exity=true;    
-           }
-           if(exity) break;
-       }
+
+        // Creating an object for the Library class
+        Library library = new Library();
+
+        // Adding some initial books to the library
+        Book book1 = new Book("AAA", "BBB", 111);
+        Book book2 = new Book("CCC", "DDD", 222);
+        Book book3 = new Book("EEE", "FFF", 333);
+        library.addBook(book1);
+        library.addBook(book2);
+        library.addBook(book3);
+
+        // Loop to keep the menu active until the user chooses to exit
+        while (true) {
+            boolean exit = false;
+
+            // Displaying the menu to the user
+            System.out.println("\n1: Add Book");
+            System.out.println("2: Remove Book");
+            System.out.println("3: Search Book");
+            System.out.println("4: Loan Book");
+            System.out.println("5: Return Book");
+            System.out.println("6: Exit");
+            System.out.print("Choose an operation: ");
+            int choice = sc.nextInt();
+
+            // Switch case to perform the operation based on the user's choice
+            switch (choice) {
+                case 1:
+                    // Adding a new book to the library
+                    System.out.print("Enter title, author, ISBN of the book: ");
+                    String title = sc.next();
+                    String author = sc.next();
+                    int isbn = sc.nextInt();
+                    Book newBook = new Book(title, author, isbn);
+                    library.addBook(newBook);
+                    break;
+                case 2:
+                    // Removing a book from the library
+                    library.removeBook();
+                    break;
+                case 3:
+                    // Searching for a book in the library
+                    System.out.println("Enter 1 for Search by Title, 2 for Search by Author, 3 for Search by ISBN: ");
+                    int searchOption = sc.nextInt();
+                    if (searchOption == 1)
+                        library.searchByTitle();
+                    else if (searchOption == 2)
+                        library.searchByAuthor();
+                    else
+                        library.searchByISBN();
+                    break;
+                case 4:
+                    // Loaning a book
+                    library.loanBook();
+                    break;
+                case 5:
+                    // Returning a book
+                    library.returnBook();
+                    break;
+                case 6:
+                    // Exiting the program
+                    library.updateCatalog();
+                    exit = true;
+                    break;
+            }
+            if (exit) break;
+        }
     }
 }
-// Creating Special Object Node(LinkedList) as its value as Book and next as Node
-class Node{
-    Book obj;
+
+// Class representing a node in the linked list
+class Node {
+    Book book;
     Node next;
-    public Node(Book obj,Node next){
-        this.obj=obj;
-        this.next=next;
+
+    public Node(Book book, Node next) {
+        this.book = book;
+        this.next = next;
     }
 }
-// Creating class Book with respective tittle,author and ISBN and updating isAvailable to true initially during object creation
-class Book{
-    String tittle,author;
-    int ISBN;
-    boolean isAvail=false;
-    public Book(String tittle,String author,int ISBN){
-        this.tittle=tittle;
-        this.author=author;
-        this.ISBN=ISBN;
-        isAvail=true;
+
+// Class representing a book with title, author, ISBN, and availability status
+class Book {
+    String title;
+    String author;
+    int isbn;
+    boolean isAvailable;
+
+    public Book(String title, String author, int isbn) {
+        this.title = title;
+        this.author = author;
+        this.isbn = isbn;
+        this.isAvailable = true;
     }
 }
-// Creating Library class with various methods such as AddBook, removeBook etc..
-class Library{
-// Creating Stack of recent addition, Queue of removal requests, LinkedList of Books stream
-   static Node books=new Node(new Book("Dummy","SV",4585),null);
-    static Node cur=books;
-    static Queue<Book> remReq=new LinkedList<>();
-    static  Stack<Book> recadd=new Stack<>();
-    public static void addbook(Book obj){
-        //  Adding book to the linked list stream 
-        cur.next=new Node(obj,null);
-        cur=cur.next;
-        // updating the lastest book addition to the stack recadd
-        recadd.push(obj);
+
+// Class representing the library with methods to manage books
+class Library {
+    static Node bookList = new Node(new Book("Dummy", "SV", 4585), null);
+    static Node currentBookNode = bookList;
+    static Queue<Book> removalRequests = new LinkedList<>();
+    static Stack<Book> recentAdditions = new Stack<>();
+
+    // Method to add a book to the library
+    public static void addBook(Book book) {
+        currentBookNode.next = new Node(book, null);
+        currentBookNode = currentBookNode.next;
+        recentAdditions.push(book);
     }
-    public static void removebook(){
-         Scanner sc=new Scanner(System.in);
-        
-        
-// Description to the user for removal by tittle or ISBN of a book
-        System.out.println("Enter 1:Remove Book by Tittle or 2:Remove Book by ISBN:  ");
-        int n=sc.nextInt();
-        if(n==1){
-            System.out.println("Enter tittle of Book: ");
-            String s=sc.next();
-            boolean exist=false;
-            Node t=books.next;
-            while(t!=null){
-                Book b=t.obj;
-                String temt=b.tittle;
-                if(temt.equals(s)){
-                    remReq.add(b); 
-                    exist=true;
+
+    // Method to remove a book from the library
+    public static void removeBook() {
+        Scanner sc = new Scanner(System.in);
+
+        // Prompting user to choose removal by title or ISBN
+        System.out.println("Enter 1 to Remove Book by Title or 2 to Remove Book by ISBN: ");
+        int option = sc.nextInt();
+        boolean bookExists = false;
+
+        if (option == 1) {
+            System.out.print("Enter the title of the book: ");
+            String title = sc.next();
+            Node temp = bookList.next;
+            while (temp != null) {
+                Book book = temp.book;
+                if (book.title.equals(title)) {
+                    removalRequests.add(book);
+                    bookExists = true;
                     break;
                 }
-                t=t.next;
+                temp = temp.next;
             }
-            if(!exist)
-             System.out.println("Book doesnt exist....");
-            else
-            System.out.println("Operation successful...");
-        }
-        else{
-            System.out.println("Enter ISBN of book: ");
-            int nis=sc.nextInt();
-            boolean exist=false;
-            Node t=books.next;
-            while(t!=null){
-                Book b=t.obj;
-                if(b.ISBN==nis){
-                    remReq.add(b); 
-                    exist=true;
+        } else {
+            System.out.print("Enter the ISBN of the book: ");
+            int isbn = sc.nextInt();
+            Node temp = bookList.next;
+            while (temp != null) {
+                Book book = temp.book;
+                if (book.isbn == isbn) {
+                    removalRequests.add(book);
+                    bookExists = true;
                     break;
                 }
-                t=t.next;
+                temp = temp.next;
             }
-            if(!exist)
-             System.out.println("Book doesnt exist....");
-            else
-            System.out.println("Operation successful..."); 
         }
+
+        if (!bookExists)
+            System.out.println("Book doesn't exist.");
+        else
+            System.out.println("Operation successful.");
     }
-    public static void searchtittle(){
-        System.out.println("Enter tittle of book: ");
-        Scanner sc= new Scanner(System.in);
-        String s=sc.next();
-        int reg=0;
-        Node t=books.next;
-        while(t!=null){
-            Book tb=t.obj;
-            String tt=tb.tittle;
-            if(tt.equals(s)){
-                if(tb.isAvail)
-                    reg=1;
-                else  reg=2;                
+
+    // Method to search for a book by title
+    public static void searchByTitle() {
+        System.out.print("Enter the title of the book: ");
+        Scanner sc = new Scanner(System.in);
+        String title = sc.next();
+        int status = 0;
+
+        Node temp = bookList.next;
+        while (temp != null) {
+            Book book = temp.book;
+            if (book.title.equals(title)) {
+                if (book.isAvailable)
+                    status = 1;
+                else
+                    status = 2;
                 break;
             }
-            t=t.next;
+            temp = temp.next;
         }
-        if(reg==1) System.out.println("Book Exist");
-        else if(reg==2) System.out.println("Book on Loan");
-        else   System.out.println("Book Does not exist");
-    }  
-    public static void searchauthor(){
-        System.out.println("Enter Author of Book: ");
-        Scanner sc= new Scanner(System.in);
-        String s=sc.next();
-        int reg=0;
-        Node t=books.next;
-        while(t!=null){
-            Book tb=t.obj;
-            String tt=tb.author;
-            if(tt.equals(s)){
-                if(tb.isAvail)
-                    reg=1;
-                else  reg=2;                
+
+        if (status == 1)
+            System.out.println("Book exists and is available.");
+        else if (status == 2)
+            System.out.println("Book is on loan.");
+        else
+            System.out.println("Book does not exist.");
+    }
+
+    // Method to search for a book by author
+    public static void searchByAuthor() {
+        System.out.print("Enter the author of the book: ");
+        Scanner sc = new Scanner(System.in);
+        String author = sc.next();
+        int status = 0;
+
+        Node temp = bookList.next;
+        while (temp != null) {
+            Book book = temp.book;
+            if (book.author.equals(author)) {
+                if (book.isAvailable)
+                    status = 1;
+                else
+                    status = 2;
                 break;
             }
-            t=t.next;
+            temp = temp.next;
         }
-        if(reg==1) System.out.println("Book Exist");
-        else if(reg==2) System.out.println("Book on Loan");
-        else   System.out.println("Book Does not exist");
-    }  
-    public static void searchisbn(){
-        System.out.println("Enter ISBN of Book: ");
-        Scanner sc= new Scanner(System.in);
-        int s=sc.nextInt();
-        int reg=0;
-        Node t=books.next;
-        while(t!=null){
-            Book tb=t.obj;
-            int tt=tb.ISBN;
-            if(tt==s){
-                if(tb.isAvail)
-                    reg=1;
-                else  reg=2;                
+
+        if (status == 1)
+            System.out.println("Book exists and is available.");
+        else if (status == 2)
+            System.out.println("Book is on loan.");
+        else
+            System.out.println("Book does not exist.");
+    }
+
+    // Method to search for a book by ISBN
+    public static void searchByISBN() {
+        System.out.print("Enter the ISBN of the book: ");
+        Scanner sc = new Scanner(System.in);
+        int isbn = sc.nextInt();
+        int status = 0;
+
+        Node temp = bookList.next;
+        while (temp != null) {
+            Book book = temp.book;
+            if (book.isbn == isbn) {
+                if (book.isAvailable)
+                    status = 1;
+                else
+                    status = 2;
                 break;
             }
-            t=t.next;
+            temp = temp.next;
         }
-        if(reg==1) System.out.println("Book Exist");
-        else if(reg==2) System.out.println("Book on Loan");
-        else   System.out.println("Book Does not exist");
-    } 
-    public static void loan(){
-        System.out.println("Enter ISBN of book: ");
-        Scanner sc= new Scanner(System.in);
-        int s=sc.nextInt();
-        boolean ex=false;
-        Node t=books.next;
-        while(t!=null){
-            Book tb=t.obj;
-            int tt=tb.ISBN;
-            if(tt==s){
-                ex=tb.isAvail;
-                if(ex){
-                    tb.isAvail=false;
-                    System.out.println("Operation Successful"); 
+
+        if (status == 1)
+            System.out.println("Book exists and is available.");
+        else if (status == 2)
+            System.out.println("Book is on loan.");
+        else
+            System.out.println("Book does not exist.");
+    }
+
+    // Method to loan a book from the library
+    public static void loanBook() {
+        System.out.print("Enter the ISBN of the book: ");
+        Scanner sc = new Scanner(System.in);
+        int isbn = sc.nextInt();
+        Node temp = bookList.next;
+
+        while (temp != null) {
+            Book book = temp.book;
+            if (book.isbn == isbn) {
+                if (book.isAvailable) {
+                    book.isAvailable = false;
+                    System.out.println("Operation successful. The book is now on loan.");
+                } else {
+                    System.out.println("Book is already on loan.");
                 }
-                else{
-                    System.out.println("Already on loan");
-                }
-                break;
+                return;
             }
-            t=t.next;
+            temp = temp.next;
         }
-        
-    } 
-    public static void returnbook(){
-        System.out.println("Enter ISBN of book: ");
-        Scanner sc= new Scanner(System.in);
-        int s=sc.nextInt();
-        boolean ex=false;
-        Node t=books.next;
-        while(t!=null){
-            Book tb=t.obj;
-            int tt=tb.ISBN;
-            if(tt==s){
-                tb.isAvail=true;
-                System.out.println("Operation Successful");
-                break;
+        System.out.println("Book not found.");
+    }
+
+    // Method to return a book to the library
+    public static void returnBook() {
+        System.out.print("Enter the ISBN of the book: ");
+        Scanner sc = new Scanner(System.in);
+        int isbn = sc.nextInt();
+        Node temp = bookList.next;
+
+        while (temp != null) {
+            Book book = temp.book;
+            if (book.isbn == isbn) {
+                book.isAvailable = true;
+                System.out.println("Operation successful. The book is now returned.");
+                return;
             }
-            t=t.next;
+            temp = temp.next;
         }
-        
-    } 
-    public static void removebooksofrecReq(){
-        while(!remReq.isEmpty()){
-            Book ob=remReq.poll();
-            Node te=books;
-            while(te.next!=null){
-                Book b9=te.next.obj;
-                if(b9==ob){
-                    te.next=te.next.next;
+        System.out.println("Book not found.");
+    }
+
+    // Method to update the library catalog by removing books from the removal request queue
+    public static void updateCatalog() {
+        while (!removalRequests.isEmpty()) {
+            Book bookToRemove = removalRequests.poll();
+            Node temp = bookList;
+            while (temp.next != null) {
+                if (temp.next.book == bookToRemove) {
+                    temp.next = temp.next.next;
                     break;
                 }
-                te=te.next;
+                temp = temp.next;
             }
         }
-        System.out.println("All Books data updated Successfully");
+        System.out.println("All books data updated successfully.");
     }
 }
