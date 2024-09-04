@@ -1,7 +1,5 @@
 # Library_management_System
 Co-ignite Hackathon
-# Library Management System
-
 ## Overview
 
 The Library Management System is a simple Java application that allows users to manage a collection of books. The system provides functionality to add, remove, search, loan, and return books. The operations are managed through a console-based menu, making it easy to interact with the system.
